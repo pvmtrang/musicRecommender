@@ -1,0 +1,13 @@
+{% extends "playlist.html" %}
+
+{% block recommendation %}
+
+<p class="alert alert-primary"> This is a recommendation list.</p>
+<ul class="list-group">
+    {% for x in recommend_list %}
+        <li class="list-group-item">{{x}}</li>
+    {% endfor %}
+    
+</ul>
+
+{% endblock %}
