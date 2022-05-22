@@ -10,18 +10,36 @@
 <body>
   <h1 class="text-bg-primary p-3">Hello World!</h1>
   <div class="container-fluid">
-    <p>Welcome to my first Django project!</p>
-
     <div class="row">
-      <div class="col-5">
-        {% include "playlist.html" %}
-        This is for playlist
+      <div class="col-2">
+        <ul class="nav nav-pills flex-column">
+          <!-- Lam the nao the make the current active -->
+          {% for i in sample_list %}
+            <li class="nav-item">
+              <a class="nav-link" href="/{{i.id}}/"> i.name </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="col-4">
+        <div class="col">
+          <h1 class="display-5">Sample 1</h1>
+          <p>Description</p>
+          <ul class="list-group">
+              {% for x in song_list %}
+                  <li class="list-group-item">{{x}}</li>
+              {% endfor %}
+          </ul>
+        </div>
       </div>
       <div class="col">
-        <p class="btn btn-danger">Button</p>
-        {% block recommendation %}
-        This is for recommendation list
-        {% endblock %}
+        <p class="alert alert-primary"> This is a recommendation list.</p>
+        <ul class="list-group">
+            {% for x in recommend_list %}
+                <li class="list-group-item">{{x}}</li>
+            {% endfor %}
+            
+        </ul>
       </div>
     </div>
   </div>  

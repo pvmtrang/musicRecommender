@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import pickle
 
+from .models import Song
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
@@ -18,10 +19,10 @@ from collections import defaultdict
 import warnings
 warnings.filterwarnings("ignore")
 
-
-# data = pd.read_csv("/content/drive/MyDrive/Spotify-data/data.csv")
-
 data = pd.read_csv("/home/tieu/Documents/musicRecommender/app/data.csv")
+# data = pd.DataFrame.from_records(Song.objects.all())
+data['unique'] = data['name'] + data['artists']
+data = data.drop_duplicates(subset='unique', keep='first')
 
 client_id = "a8ef1499b1f3468d9ce3186629adae0c"
 client_secret = "30423bf1520b4e00a5bc4e076fe870aa"
@@ -29,32 +30,9 @@ client_secret = "30423bf1520b4e00a5bc4e076fe870aa"
 client_credentials_manager = SpotifyClientCredentials(client_id,client_secret)
 sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
-# def find_song(name, year):
-#     song_data = defaultdict()
-#     results = sp.search(q= 'track: {} year: {}'.format(name,year), limit=1)
-#     if results['tracks']['items'] == []:
-#         return None
-
-#     results = results['tracks']['items'][0]
-#     track_id = results['id']
-#     audio_features = sp.audio_features(track_id)[0]
-
-#     song_data['name'] = [name]
-#     song_data['year'] = [year]
-#     song_data['explicit'] = [int(results['explicit'])]
-#     song_data['duration_ms'] = [results['duration_ms']]
-#     song_data['popularity'] = [results['popularity']]
-
-#     for key, value in audio_features.items():
-#         song_data[key] = value
-
-#     return pd.DataFrame(song_data)
-
-# print(find_song("Make you feel my love", 2008))
-
 def find_song(name):
     song_data = defaultdict()
-    results = sp.search(q= 'track: {}'.format(name,), limit=1)
+    results = sp.search(q= 'track: {}'.format(name), limit=1)
     if results['tracks']['items'] == []:
         return None
 
@@ -66,7 +44,8 @@ def find_song(name):
     song_data['explicit'] = [int(results['explicit'])]
     song_data['duration_ms'] = [results['duration_ms']]
     song_data['popularity'] = [results['popularity']]
-
+    # Cha le spotify api ko tra ve 
+    # cac feature explicit duration cac thu ben tren a??
     for key, value in audio_features.items():
         song_data[key] = value
 
@@ -80,29 +59,21 @@ song_cluster_pipeline = Pipeline([('scaler', StandardScaler()),
                                  ], verbose=False)
 model = song_cluster_pipeline
 
-X = data.select_dtypes(np.number)
-number_cols = list(X.columns)
-# song_cluster_pipeline.fit(X)
-model.fit(X)
-# song_cluster_labels = song_cluster_pipeline.predict(X)
-song_cluster_labels = model.predict(X)
-data['cluster_label'] = song_cluster_labels
+# X = data.select_dtypes(np.number)
 
 number_cols = ['valence', 'year', 'acousticness', 'danceability', 
     'duration_ms', 'energy', 'explicit',
     'instrumentalness', 'key', 'liveness', 'loudness', 'mode', 
     'popularity', 'speechiness', 'tempo']
 
+X = data[number_cols]
 
-# def get_song_data(song, spotify_data):
-    
-#     try:
-#         song_data = spotify_data[(spotify_data['name'] == song['name']) 
-#                                 & (spotify_data['year'] == song['year'])].iloc[0]
-#         return song_data
-    
-#     except IndexError:
-#         return find_song(song['name'], song['year'])
+number_cols = list(X.columns)
+# song_cluster_pipeline.fit(X)
+model.fit(X)
+song_cluster_labels = model.predict(X)
+data['cluster_label'] = song_cluster_labels
+
 def get_song_data(song, spotify_data):
     
     try:
@@ -129,7 +100,7 @@ def get_mean_vector(song_list, spotify_data):
     song_matrix = np.array(list(song_vectors))
     return np.mean(song_matrix, axis=0)
 
-
+# tu ({name, year}, {n, y}) -> {name:...}, {year:...}
 def flatten_dict_list(dict_list):
 
     flattened_dict = defaultdict()
@@ -142,7 +113,7 @@ def flatten_dict_list(dict_list):
             
     return flattened_dict
 
-pickle.dump(model, open('mlmodel.sav','wb'))
+# pickle.dump(model, open('mlmodel.sav','wb'))
 
 # def recommend_songs( song_list, spotify_data, n_songs=10):
     

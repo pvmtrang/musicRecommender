@@ -1,0 +1,8 @@
+To load csv into database:
+1. `sqlite3 db.sqlite3` (install sqlite3 cmd first)
+2. `.mode csv`
+3. `.import app/data-1M.csv app_song`
+______________________________________
+To delete database from scratch
+- delete db.sqlite3 
+- delete every migrations in /migrations, except for __init__.py

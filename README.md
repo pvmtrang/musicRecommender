@@ -1,11 +1,16 @@
 # Music recommender
 ## To run this shitty dumb project
-T push ca file /venv len vi t bi dieng
-If cannot directly `manage.py runserver` this project then delete the folder /venv.
 
+_T push ca file /venv len vi t bi dien._
+
+Activate the virtual environment by `source venv/bin/activate`. (Remember to do this everytime restart/reopen the project.)
+
+Then, deploy the project by `python3 manage.py runserver`.
+
+If it doesnt work, maybe try deleting the folder /venv. 
 Then again recreate a new virtual environment
 `python3 -m venv venv`
-and activate it by `source venv/bin/activate`.
+and activate it. 
 
 Install bunch of packages:
 
@@ -15,14 +20,13 @@ Remember this shit:
 ```pip3 install spotipy```
 ___
 ## What is wrong right now
-- Templates is messed up: Fucked up when tried to use `extends`. Can't `import` properly anymore.
+
 ___
 
 ## What to do next
 - Display the recommend.html template with playlist.html data (??how about pass another parameter to recommend_detail view and requery song_list from song?)
 - List danh sach cac sample playlist ra tu database 
 - Click on each sample playlist's button -> switch to the corresponding detail display page
-- Click on 'Recommend' button to switch to recommend template
 - Display Sample name + description below
 - Display song with artist and released year below 
 ___
